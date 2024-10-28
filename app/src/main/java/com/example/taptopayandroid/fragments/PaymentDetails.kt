@@ -29,7 +29,7 @@ class PaymentDetails : Fragment() {
 
         btnCollectPayment.setOnClickListener {
             var amount = priceInput.text.toString()
-            (activity as? NavigationListener)?.onCollectPayment(amount.toLong(), "usd",
+            (activity as? NavigationListener)?.onCollectPayment(amount.toLong(), "eur",
                 skipTipping = true,
                 extendedAuth = false,
                 incrementalAuth = false

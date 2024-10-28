@@ -25,6 +25,7 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
+        buildConfig = true
     }
 
     buildTypes {
@@ -61,8 +62,6 @@ ext {
 
 dependencies {
 
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-
     implementation "com.google.android.material:material:1.6.1"
     implementation "androidx.appcompat:appcompat:1.5.1"
     implementation "androidx.core:core-ktx:1.9.0"
@@ -74,7 +73,6 @@ dependencies {
     // We are using Kotlin, and not Java 8, so do not use the recommended Java 8 library
     //noinspection LifecycleAnnotationProcessorWithJava8
     kapt "androidx.lifecycle:lifecycle-compiler:$androidx_lifecycle_version"
-    testImplementation "androidx.arch.core:core-testing:2.1.0"
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
@@ -88,8 +86,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
     // Stripe Terminal library
-    implementation "com.stripe:stripeterminal-localmobile:2.20.0"
-    implementation "com.stripe:stripeterminal-core:2.20.0"
+    implementation "com.stripe:stripeterminal-localmobile:2.20.1"
+    implementation "com.stripe:stripeterminal-core:2.20.1"
 
     // Leak canary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:2.9.1"

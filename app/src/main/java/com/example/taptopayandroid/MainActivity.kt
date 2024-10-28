@@ -63,8 +63,8 @@ class MainActivity : AppCompatActivity(), NavigationListener {
         // Check for location and bluetooth permissions
         val deniedPermissions = mutableListOf<String>().apply {
             if (!isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) add(Manifest.permission.ACCESS_FINE_LOCATION)
-            if (!isGranted(Manifest.permission.BLUETOOTH_CONNECT)) add(Manifest.permission.BLUETOOTH_CONNECT)
-            if (!isGranted(Manifest.permission.BLUETOOTH_SCAN)) add(Manifest.permission.BLUETOOTH_SCAN)
+//            if (!isGranted(Manifest.permission.BLUETOOTH_CONNECT)) add(Manifest.permission.BLUETOOTH_CONNECT)
+//            if (!isGranted(Manifest.permission.BLUETOOTH_SCAN)) add(Manifest.permission.BLUETOOTH_SCAN)
         }.toTypedArray()
 
         if (deniedPermissions.isNotEmpty()) {
@@ -72,6 +72,8 @@ class MainActivity : AppCompatActivity(), NavigationListener {
             requestPermissionLauncher.launch(deniedPermissions)
         } else if (!Terminal.isInitialized() && verifyGpsEnabled()) {
             initialize()
+        } else if (Terminal.isInitialized() && verifyGpsEnabled()) {
+            loadLocations()
         }
     }
 
@@ -83,12 +85,13 @@ class MainActivity : AppCompatActivity(), NavigationListener {
     }
 
     private fun onPermissionResult(result: Map<String, Boolean>) {
+        Log.i("onPermissionResult", result.toString())
         val deniedPermissions: List<String> = result
             .filter { !it.value }
             .map { it.key }
 
         // If we receive a response to our permission check, initialize
-        if (deniedPermissions.isEmpty() && !Terminal.isInitialized() && verifyGpsEnabled()) {
+        if (!Terminal.isInitialized() && verifyGpsEnabled()) {
             initialize()
         }
     }
@@ -112,6 +115,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
     private fun initialize() {
         // Initialize the Terminal as soon as possible
         try {
+            Log.i("MainActivity", "initialized OK ")
             Terminal.initTerminal(
                 applicationContext, LogLevel.VERBOSE, TokenProvider(),
                 TerminalEventListener()
@@ -125,6 +129,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
         }
 
         loadLocations()
+//        onNavigateToPaymentDetails()
     }
 
     private val mutableListState = MutableStateFlow(LocationListState())
@@ -152,7 +157,17 @@ class MainActivity : AppCompatActivity(), NavigationListener {
         extendedAuth: Boolean,
         incrementalAuth: Boolean
     ){
+        Log.i("MainActivity", "collectPayment")
         SKIP_TIPPING = skipTipping
+
+//        val params = PaymentIntentParameters.Builder()
+//            .setAmount(amount)
+//            .setCurrency(currency)
+//            .build()
+//        Terminal.getInstance().createPaymentIntent(
+//            params,
+//            createPaymentIntentCallback
+//        )
 
         ApiClient.createPaymentIntent(
             amount,
@@ -165,12 +180,13 @@ class MainActivity : AppCompatActivity(), NavigationListener {
                     response: Response<PaymentIntentCreationResponse>
                 ) {
                     if (response.isSuccessful && response.body() != null) {
+                        Log.i("MainActivity", "retrievePaymentIntent")
                         Terminal.getInstance().retrievePaymentIntent(
                             response.body()?.secret!!,
                             createPaymentIntentCallback
                         )
                     } else {
-                        println("Request not successful: ${response.body()}")
+                        println("Request not successful: ${response.errorBody()}")
                     }
                 }
 
@@ -193,6 +209,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
                     .skipTipping(skipTipping)
                     .build()
 
+                Log.i("MainActivity", "collectPaymentMethod")
                 Terminal.getInstance().collectPaymentMethod(
                     paymentIntent, collectPaymentMethodCallback, collectConfig
                 )
@@ -207,6 +224,15 @@ class MainActivity : AppCompatActivity(), NavigationListener {
     private val collectPaymentMethodCallback by lazy {
         object : PaymentIntentCallback {
             override fun onSuccess(paymentIntent: PaymentIntent) {
+                Log.i("MainActivity", "scoring------")
+                val pm = paymentIntent.paymentMethod
+                val card = pm?.cardPresentDetails ?: pm?.interacPresentDetails
+                // Placeholder for business logic on card before confirming paymentIntent
+                Log.i("MainActivity", "pm : $pm")
+                Log.i("MainActivity", "card : $card")
+
+
+                Log.i("MainActivity", "processPayment")
                 Terminal.getInstance().processPayment(paymentIntent, processPaymentCallback)
             }
 
@@ -219,6 +245,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
     private val processPaymentCallback by lazy {
         object : PaymentIntentCallback {
             override fun onSuccess(paymentIntent: PaymentIntent) {
+                Log.i("MainActivity", "capturePaymentIntent")
                 ApiClient.capturePaymentIntent(paymentIntent.id)
 
                 //TODO : Return to previous Screen
@@ -244,7 +271,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
         val config = DiscoveryConfiguration(
             timeout = 0,
             discoveryMethod = DiscoveryMethod.LOCAL_MOBILE,
-            isSimulated = false,
+            isSimulated = true,
             location = mutableListState.value.locations[0].id
         )
 
@@ -252,6 +279,11 @@ class MainActivity : AppCompatActivity(), NavigationListener {
             DiscoveryListener {
             override fun onUpdateDiscoveredReaders(readers: List<Reader>) {
                 readers.filter { it.networkStatus != Reader.NetworkStatus.OFFLINE }
+
+                readers.forEach {
+                    Log.i("MainActivity", "onUpdateDiscoveredReaders: ${it.id} - ${it.label} - ${it.deviceType} - ${it.softwareVersion}")
+                }
+
                 var reader = readers[0]
 
                 val config = ConnectionConfiguration.LocalMobileConnectionConfiguration("${mutableListState.value.locations[0].id}")

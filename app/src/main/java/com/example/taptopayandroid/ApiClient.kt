@@ -8,6 +8,7 @@ import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 /**
  * The `ApiClient` is a singleton object used to make calls to our backend and return their results
@@ -15,6 +16,8 @@ import java.io.IOException
 object ApiClient {
 
     private val client = OkHttpClient.Builder()
+        .readTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(30, TimeUnit.SECONDS)
         .build()
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.EXAMPLE_BACKEND_URL)
@@ -37,27 +40,8 @@ object ApiClient {
         }
     }
 
-    internal fun createLocation(
-        displayName: String?,
-        city: String?,
-        country: String?,
-        line1: String?,
-        line2: String?,
-        postalCode: String?,
-        state: String?,
-    ) {
-        TODO("Call Backend application to create location")
-    }
-
     internal fun capturePaymentIntent(id: String) {
         service.capturePaymentIntent(id).execute()
-    }
-
-    internal fun cancelPaymentIntent(
-        id: String,
-        callback: Callback<Void>
-    ) {
-        service.cancelPaymentIntent(id).enqueue(callback)
     }
 
     /**
