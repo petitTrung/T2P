@@ -8,7 +8,7 @@ import com.stripe.stripeterminal.external.models.ConnectionTokenException
  * A simple implementation of the [ConnectionTokenProvider] interface. We just request a
  * new token from our backend simulator and forward any exceptions along to the SDK.
  */
-class TokenProvider : ConnectionTokenProvider {
+class TokenProvider() : ConnectionTokenProvider {
 
     override fun fetchConnectionToken(callback: ConnectionTokenCallback) {
         try {

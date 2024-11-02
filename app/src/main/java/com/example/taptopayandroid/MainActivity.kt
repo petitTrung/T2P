@@ -26,6 +26,13 @@ import retrofit2.Response
 
 var SKIP_TIPPING: Boolean = true
 
+var LOCATION: String = "tml_..."
+
+// Retrieved from:
+// http :1337/v1/payments/payment_xxx/psp-session psp=stripe selected_payment_method=card_present
+var PAYMENT_INTENT_SECRET: String = "pi_..."
+
+
 class MainActivity : AppCompatActivity(), NavigationListener {
     // Register the permissions callback to handles the response to the system permissions dialog.
     private val requestPermissionLauncher = registerForActivityResult(
@@ -73,7 +80,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
         } else if (!Terminal.isInitialized() && verifyGpsEnabled()) {
             initialize()
         } else if (Terminal.isInitialized() && verifyGpsEnabled()) {
-            loadLocations()
+//            loadLocations()
         }
     }
 
@@ -127,27 +134,6 @@ class MainActivity : AppCompatActivity(), NavigationListener {
                 e
             )
         }
-
-        loadLocations()
-//        onNavigateToPaymentDetails()
-    }
-
-    private val mutableListState = MutableStateFlow(LocationListState())
-
-    private val locationCallback = object : LocationListCallback {
-        override fun onFailure(e: TerminalException) {
-            e.printStackTrace()
-        }
-
-        override fun onSuccess(locations: List<Location>, hasMore: Boolean) {
-            mutableListState.value = mutableListState.value.let {
-                it.copy(
-                    locations = it.locations + locations,
-                    hasMore = hasMore,
-                    isLoading = false,
-                )
-            }
-        }
     }
 
     private fun collectPayment(
@@ -160,43 +146,18 @@ class MainActivity : AppCompatActivity(), NavigationListener {
         Log.i("MainActivity", "collectPayment")
         SKIP_TIPPING = skipTipping
 
-//        val params = PaymentIntentParameters.Builder()
-//            .setAmount(amount)
-//            .setCurrency(currency)
-//            .build()
-//        Terminal.getInstance().createPaymentIntent(
-//            params,
-//            createPaymentIntentCallback
-//        )
+        val params = PaymentIntentParameters.Builder()
+            .setAmount(amount)
+            .setCurrency(currency)
+            .build()
+        Terminal.getInstance().createPaymentIntent(
+            params,
+            createPaymentIntentCallback
+        )
 
-        ApiClient.createPaymentIntent(
-            amount,
-            currency,
-            extendedAuth,
-            incrementalAuth,
-            callback = object : retrofit2.Callback<PaymentIntentCreationResponse> {
-                override fun onResponse(
-                    call: Call<PaymentIntentCreationResponse>,
-                    response: Response<PaymentIntentCreationResponse>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        Log.i("MainActivity", "retrievePaymentIntent")
-                        Terminal.getInstance().retrievePaymentIntent(
-                            response.body()?.secret!!,
-                            createPaymentIntentCallback
-                        )
-                    } else {
-                        println("Request not successful: ${response.errorBody()}")
-                    }
-                }
-
-                override fun onFailure(
-                    call: Call<PaymentIntentCreationResponse>,
-                    t: Throwable
-                ) {
-                    t.printStackTrace()
-                }
-            }
+        Terminal.getInstance().retrievePaymentIntent(
+            PAYMENT_INTENT_SECRET,
+            createPaymentIntentCallback
         )
     }
 
@@ -207,6 +168,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
 
                 val collectConfig = CollectConfiguration.Builder()
                     .skipTipping(skipTipping)
+                    .updatePaymentIntent(true)
                     .build()
 
                 Log.i("MainActivity", "collectPaymentMethod")
@@ -233,7 +195,19 @@ class MainActivity : AppCompatActivity(), NavigationListener {
 
 
                 Log.i("MainActivity", "processPayment")
-                Terminal.getInstance().processPayment(paymentIntent, processPaymentCallback)
+                // 🚨AUTHENTICATION: I don't know when the PIN will be asked for,
+                // so we may have to confirm in either the frontend (processPayment)
+                // or the backend (ApiClient.confirmPaymentIntent)
+                //Terminal.getInstance().processPayment(paymentIntent, processPaymentCallback)
+
+
+                try {
+                    ApiClient.confirmPaymentIntent(paymentIntent.id)
+                    navigateTo(PaymentDetails.TAG, PaymentDetails(), true)
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "processPayment failed")
+                    e.printStackTrace()
+                }
             }
 
             override fun onFailure(e: TerminalException) {
@@ -246,7 +220,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
         object : PaymentIntentCallback {
             override fun onSuccess(paymentIntent: PaymentIntent) {
                 Log.i("MainActivity", "capturePaymentIntent")
-                ApiClient.capturePaymentIntent(paymentIntent.id)
+                //ApiClient.capturePaymentIntent(paymentIntent.id)
 
                 //TODO : Return to previous Screen
                 navigateTo(PaymentDetails.TAG, PaymentDetails(), true)
@@ -258,21 +232,14 @@ class MainActivity : AppCompatActivity(), NavigationListener {
         }
     }
 
-    private fun loadLocations() {
-        Terminal.getInstance().listLocations(
-            ListLocationsParameters.Builder().apply {
-                limit = 100
-            }.build(),
-            locationCallback
-        )
-    }
 
     private fun connectReader(){
         val config = DiscoveryConfiguration(
             timeout = 0,
             discoveryMethod = DiscoveryMethod.LOCAL_MOBILE,
-            isSimulated = true,
-            location = mutableListState.value.locations[0].id
+            isSimulated = false,
+            location = LOCATION
+//            location = mutableListState.value.locations[0].id
         )
 
         Terminal.getInstance().discoverReaders(config, discoveryListener = object :
@@ -285,8 +252,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
                 }
 
                 var reader = readers[0]
-
-                val config = ConnectionConfiguration.LocalMobileConnectionConfiguration("${mutableListState.value.locations[0].id}")
+                val config = ConnectionConfiguration.LocalMobileConnectionConfiguration(LOCATION)
 
                 Terminal.getInstance().connectLocalMobileReader(
                     reader,
@@ -302,11 +268,17 @@ class MainActivity : AppCompatActivity(), NavigationListener {
                                 val manager: FragmentManager = supportFragmentManager
                                 val fragment: Fragment? = manager.findFragmentByTag(ConnectReaderFragment.TAG)
 
-                                if(reader.id !== null && mutableListState.value.locations[0].displayName !== null){
+                                if(reader.id !== null){
                                     (fragment as ConnectReaderFragment).updateReaderId(
-                                        mutableListState.value.locations[0].displayName!!, reader.id!!
+                                        LOCATION, reader.id!!
                                     )
                                 }
+
+//                                if(reader.id !== null && mutableListState.value.locations[0].displayName !== null){
+//                                    (fragment as ConnectReaderFragment).updateReaderId(
+//                                        mutableListState.value.locations[0].displayName!!, reader.id!!
+//                                    )
+//                                }
                             }
                         }
                     }

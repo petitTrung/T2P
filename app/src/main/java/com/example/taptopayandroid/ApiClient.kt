@@ -3,6 +3,7 @@ package com.example.taptopayandroid
 import com.example.taptopayandroid.BuildConfig
 import com.example.taptopayandroid.PaymentIntentCreationResponse
 import com.stripe.stripeterminal.external.models.ConnectionTokenException
+import com.stripe.stripeterminal.external.models.PaymentMethod
 import okhttp3.OkHttpClient
 import retrofit2.Callback
 import retrofit2.Retrofit
@@ -40,34 +41,21 @@ object ApiClient {
         }
     }
 
-    internal fun capturePaymentIntent(id: String) {
-        service.capturePaymentIntent(id).execute()
+    internal fun confirmPaymentIntent(id: String) {
+        val result = service.confirmPaymentIntent(id).execute()
+        if (!result.isSuccessful) {
+            throw Exception("something happened :-/")
+        }
     }
 
-    /**
-     * This method is calling the example backend (https://github.com/stripe/example-terminal-backend)
-     * to create paymentIntent for Internet based readers, for example WisePOS E. For your own application, you
-     * should create paymentIntent in your own merchant backend.
-     */
-    internal fun createPaymentIntent(
-        amount: Long,
-        currency: String,
-        extendedAuth: Boolean,
-        incrementalAuth: Boolean,
-        callback: Callback<PaymentIntentCreationResponse>
-    ) {
-        val createPaymentIntentParams = buildMap<String, String> {
-            put("amount", amount.toString())
-            put("currency", currency)
-
-            if (extendedAuth) {
-                put("payment_method_options[card_present[request_extended_authorization]]", "true")
-            }
-            if (incrementalAuth) {
-                put("payment_method_options[card_present[request_incremental_authorization_support]]", "true")
-            }
+    internal fun saveCard(paymentId: String, paymentMethodId: String) {
+        // paymentId can be extracted from paymentIntent.metadata
+        val req = SaveCardRequest(card = CardPspInfoSchema(
+            provider = "stripe", pspDetails = StripeCardSchema(paymentMethodId)
+        ))
+        val result = service.saveCard(paymentId, req).execute()
+        if (!result.isSuccessful) {
+            throw Exception("something happened :-/")
         }
-
-        service.createPaymentIntent(createPaymentIntentParams).enqueue(callback)
     }
 }
