@@ -1,81 +1,324 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ConnectReaderFragment">
+    tools:context=".fragments.ConnectReaderFragment"
+    tools:ignore="HardcodedText,SpUsage">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect reader"
+        android:layout_marginTop="30dip"
+        android:text="Android Terminal"
         android:textColor="#414552"
-        android:textSize="30dp"
+        android:textSize="30dip"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.205"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/reader_connected_label"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reader connected:"
-        android:textColor="#414552"
-        android:textSize="17dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.156"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.159" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
 
-    <TextView
-        android:id="@+id/reader_id"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No reader currently connected"
-        android:textColor="#87909f"
-        android:textSize="17dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@id/reader_connected_label"
-        app:layout_constraintStart_toStartOf="@id/reader_connected_label"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.206" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
 
-    <Button
-        android:id="@+id/connect_reader_button"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginBottom="496dp"
-        android:backgroundTint="#635bff"
-        android:text="Connect reader"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@id/reader_connected_label"
-        app:layout_constraintStart_toStartOf="@id/reader_connected_label" />
+    <TextView
+        android:id="@+id/locationText"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:text="Request Location"
+        android:textColor="@color/step_text"
+        android:textSize="@dimen/step_text_size"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        tools:visibility="visible" />
 
-    <Button
-        android:id="@+id/edit_payment_details_button"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginBottom="496dp"
-        android:backgroundTint="#635bff"
-        android:text="Edit payment details"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ImageView
+        android:id="@+id/locationIcon"
+        android:layout_width="@dimen/step_checked_icon"
+        android:layout_height="@dimen/step_checked_icon"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/locationText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@id/reader_connected_label"
-        app:layout_constraintStart_toStartOf="@id/reader_connected_label" />
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/locationText"
+        app:srcCompat="@drawable/ic_checked"
+        tools:visibility="visible" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/locationLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorSize="@dimen/step_checked_icon"
+        app:layout_constraintBottom_toBottomOf="@id/locationText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/locationText"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/bluetoothText"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:text="Request Bluetooth"
+        android:textColor="@color/step_text"
+        android:textSize="@dimen/step_text_size"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/locationText"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/bluetoothIcon"
+        android:layout_width="@dimen/step_checked_icon"
+        android:layout_height="@dimen/step_checked_icon"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/bluetoothText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/bluetoothText"
+        app:srcCompat="@drawable/ic_checked"
+        tools:visibility="visible" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/bluetoothLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorSize="@dimen/step_checked_icon"
+        app:layout_constraintBottom_toBottomOf="@id/bluetoothText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/bluetoothText"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/nfcText"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:text="Request NFC"
+        android:textColor="@color/step_text"
+        android:textSize="@dimen/step_text_size"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/bluetoothText"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/nfcIcon"
+        android:layout_width="@dimen/step_checked_icon"
+        android:layout_height="@dimen/step_checked_icon"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/nfcText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/nfcText"
+        app:srcCompat="@drawable/ic_checked"
+        tools:visibility="visible" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/nfcLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorSize="@dimen/step_checked_icon"
+        app:layout_constraintBottom_toBottomOf="@id/nfcText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/nfcText"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/requestTokenText"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:text="Request Terminal Token"
+        android:textColor="@color/step_text"
+        android:textSize="@dimen/step_text_size"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/nfcText"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/requestTokenIcon"
+        android:layout_width="@dimen/step_checked_icon"
+        android:layout_height="@dimen/step_checked_icon"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/requestTokenText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/requestTokenText"
+        app:srcCompat="@drawable/ic_checked"
+        tools:visibility="visible" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/requestTokenLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorSize="@dimen/step_checked_icon"
+        app:layout_constraintBottom_toBottomOf="@id/requestTokenText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/requestTokenText"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/initializeTerminalText"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:text="Initialize Terminal SDK"
+        android:textColor="@color/step_text"
+        android:textSize="@dimen/step_text_size"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/requestTokenText"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/initializeTerminalIcon"
+        android:layout_width="@dimen/step_checked_icon"
+        android:layout_height="@dimen/step_checked_icon"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/initializeTerminalText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/initializeTerminalText"
+        app:srcCompat="@drawable/ic_checked"
+        tools:visibility="visible" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/initializeTerminalLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorSize="@dimen/step_checked_icon"
+        app:layout_constraintBottom_toBottomOf="@id/initializeTerminalText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/initializeTerminalText"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/initializeReaderText"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:text="Initialize Local Reader"
+        android:textColor="@color/step_text"
+        android:textSize="@dimen/step_text_size"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/initializeTerminalText"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/initializeReaderIcon"
+        android:layout_width="@dimen/step_checked_icon"
+        android:layout_height="@dimen/step_checked_icon"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/initializeReaderText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/initializeReaderText"
+        app:srcCompat="@drawable/ic_checked"
+        tools:visibility="visible" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/initializeReaderLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorSize="@dimen/step_checked_icon"
+        app:layout_constraintBottom_toBottomOf="@id/initializeReaderText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/initializeReaderText"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/connectReaderText"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:text="Connect to Local Reader"
+        android:textColor="@color/step_text"
+        android:textSize="@dimen/step_text_size"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/initializeReaderText"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/connectReaderIcon"
+        android:layout_width="@dimen/step_checked_icon"
+        android:layout_height="@dimen/step_checked_icon"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/connectReaderText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/connectReaderText"
+        app:srcCompat="@drawable/ic_checked"
+        tools:visibility="visible" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/connectReaderLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorSize="@dimen/step_checked_icon"
+        app:layout_constraintBottom_toBottomOf="@id/connectReaderText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/endGuideline"
+        app:layout_constraintTop_toTopOf="@id/connectReaderText"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

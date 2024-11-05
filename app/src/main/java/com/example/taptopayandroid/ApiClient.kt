@@ -1,11 +1,8 @@
 package com.example.taptopayandroid
 
-import com.example.taptopayandroid.BuildConfig
-import com.example.taptopayandroid.PaymentIntentCreationResponse
 import com.stripe.stripeterminal.external.models.ConnectionTokenException
-import com.stripe.stripeterminal.external.models.PaymentMethod
 import okhttp3.OkHttpClient
-import retrofit2.Callback
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
@@ -19,6 +16,7 @@ object ApiClient {
     private val client = OkHttpClient.Builder()
         .readTimeout(30, TimeUnit.SECONDS)
         .connectTimeout(30, TimeUnit.SECONDS)
+        .addInterceptor(createLoggingInterceptor())
         .build()
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.EXAMPLE_BACKEND_URL)
@@ -40,6 +38,11 @@ object ApiClient {
             throw ConnectionTokenException("Creating connection token failed", e)
         }
     }
+
+    internal fun createLoggingInterceptor(): HttpLoggingInterceptor =
+        HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
 
     internal fun confirmPaymentIntent(id: String) {
         val result = service.confirmPaymentIntent(id).execute()

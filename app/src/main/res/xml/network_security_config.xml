@@ -1,0 +1,27 @@
+<network-security-config>
+    <debug-overrides>
+        <trust-anchors>
+            <!-- Trust user added CAs while debuggable only -->
+            <certificates src="user" />
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
+
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">tn.getalma.eu.ngrok.io</domain>
+        <domain includeSubdomains="true">fr.getalma.eu.ngrok.io</domain>
+        <domain includeSubdomains="true">api.staging.getalma.eu</domain>
+        <domain includeSubdomains="true">api.staging.almapay.com</domain>
+        <domain includeSubdomains="true">api.sandbox.getalma.eu</domain>
+        <domain includeSubdomains="true">api.sandbox.almapay.eu</domain>
+        <domain includeSubdomains="true">api.getalma.eu</domain>
+        <domain includeSubdomains="true">api.almapay.com</domain>
+        <domain includeSubdomains="true">segment.io</domain>
+        <domain includeSubdomains="true">cities.dev.getalma.eu</domain>
+        <domain includeSubdomains="true">cities.staging.getalma.eu</domain>
+        <domain includeSubdomains="true">cities.sandbox.getalma.eu</domain>
+        <domain includeSubdomains="true">cities.getalma.eu</domain>
+    </domain-config>
+
+</network-security-config>
