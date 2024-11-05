@@ -1,18 +1,14 @@
 package com.example.taptopayandroid
 
+import android.content.Intent
+
 /**
  * An `Activity` that should be notified when various navigation activities have been triggered
  */
 interface NavigationListener {
-    fun onCollectPayment(
-        amount: Long,
-        currency: String,
-        skipTipping: Boolean,
-        extendedAuth: Boolean,
-        incrementalAuth: Boolean
-    )
+    fun retrievePaymentIntent(intent: Intent?)
+
+    fun retrievePaymentIntent(pi: String)
 
     fun onNavigateToPaymentDetails()
-
-    fun onCancel()
 }

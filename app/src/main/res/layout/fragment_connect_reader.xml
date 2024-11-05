@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dip"
-        android:text="Android Terminal"
+        android:text="Tap to Pay Terminal"
         android:textColor="#414552"
         android:textSize="30dip"
         android:textStyle="bold"

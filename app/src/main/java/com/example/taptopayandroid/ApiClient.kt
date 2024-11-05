@@ -1,5 +1,8 @@
 package com.example.taptopayandroid
 
+import com.example.taptopayandroid.data.CreatePaymentPayload
+import com.example.taptopayandroid.data.CreatePspPayload
+import com.example.taptopayandroid.data.PaymentPayload
 import com.stripe.stripeterminal.external.models.ConnectionTokenException
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,16 +16,8 @@ import java.util.concurrent.TimeUnit
  */
 object ApiClient {
 
-    private val client = OkHttpClient.Builder()
-        .readTimeout(30, TimeUnit.SECONDS)
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .addInterceptor(createLoggingInterceptor())
-        .build()
-    private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(BuildConfig.EXAMPLE_BACKEND_URL)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    private val client = OkHttpClient.Builder().readTimeout(30, TimeUnit.SECONDS).connectTimeout(30, TimeUnit.SECONDS).addInterceptor(createLoggingInterceptor()).build()
+    private val retrofit: Retrofit = Retrofit.Builder().baseUrl(BuildConfig.EXAMPLE_BACKEND_URL).client(client).addConverterFactory(GsonConverterFactory.create()).build()
     private val service: BackendService = retrofit.create(BackendService::class.java)
 
     @Throws(ConnectionTokenException::class)
@@ -39,10 +34,22 @@ object ApiClient {
         }
     }
 
-    internal fun createLoggingInterceptor(): HttpLoggingInterceptor =
-        HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+    internal fun createLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+
+    internal fun createPayment(amount: Long): String {
+        val paymentResult = service.createPayment(CreatePaymentPayload(payment = PaymentPayload(purchase_amount = amount, installments_count = null))).execute()
+        if (!paymentResult.isSuccessful) {
+            throw Exception("create payment fail :-/")
         }
+        val paymentId = paymentResult.body()!!.id
+        val pspResult = service.postPspSession(paymentId = paymentId, CreatePspPayload()).execute()
+        if (!pspResult.isSuccessful) {
+            throw Exception("psp fail :-/")
+        }
+        return pspResult.body()!!.client_secret
+    }
 
     internal fun confirmPaymentIntent(id: String) {
         val result = service.confirmPaymentIntent(id).execute()
@@ -53,9 +60,11 @@ object ApiClient {
 
     internal fun saveCard(paymentId: String, paymentMethodId: String) {
         // paymentId can be extracted from paymentIntent.metadata
-        val req = SaveCardRequest(card = CardPspInfoSchema(
-            provider = "stripe", pspDetails = StripeCardSchema(paymentMethodId)
-        ))
+        val req = SaveCardRequest(
+            card = CardPspInfoSchema(
+                provider = "stripe", pspDetails = StripeCardSchema(paymentMethodId)
+            )
+        )
         val result = service.saveCard(paymentId, req).execute()
         if (!result.isSuccessful) {
             throw Exception("something happened :-/")

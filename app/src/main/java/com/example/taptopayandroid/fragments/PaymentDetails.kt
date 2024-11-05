@@ -1,45 +1,98 @@
 package com.example.taptopayandroid.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import com.example.taptopayandroid.NavigationListener
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.example.taptopayandroid.MainActivity
 import com.example.taptopayandroid.R
+import com.example.taptopayandroid.databinding.FragmentPaymentDetailsBinding
+import com.example.taptopayandroid.fragments.PaymentDetailsState.CreatePaymentState
+import com.google.android.material.snackbar.Snackbar
 
-class PaymentDetails : Fragment() {
+class PaymentDetails : Fragment(R.layout.fragment_payment_details) {
     companion object {
         const val TAG = "com.example.taptopayandroid.fragments.PaymentDetails"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_payment_details, container, false)
+    private var binding: FragmentPaymentDetailsBinding? = null
 
-        var btnCollectPayment = view?.findViewById(R.id.collect_payment_button) as Button
-        var cancelBtn = view?.findViewById(R.id.cancel_button) as Button
-        var priceInput = view?.findViewById(R.id.price_input) as EditText
+    private val viewModel by lazy {
+        ViewModelProvider(this)[PaymentDetailsViewModel::class.java]
+    }
 
-        btnCollectPayment.setOnClickListener {
-            var amount = priceInput.text.toString()
-            (activity as? NavigationListener)?.onCollectPayment(amount.toLong(), "eur",
-                skipTipping = true,
-                extendedAuth = false,
-                incrementalAuth = false
-            )
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        super.onCreateView(inflater, container, savedInstanceState)?.also { view -> binding = FragmentPaymentDetailsBinding.bind(view) }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding?.run {
+            collectPaymentButton.setOnClickListener {
+                viewModel.createPayment(priceInput.text.toString())
+            }
         }
 
-        cancelBtn.setOnClickListener{
-            (activity as? NavigationListener)?.onCancel()
+        observeViewModel()
+        if ((requireActivity() as MainActivity).currentPi != null) {
+            retrievePayment((requireActivity() as MainActivity).currentPi!!)
         }
+    }
 
-        return view
+    private fun observeViewModel() {
+        viewModel.state.observe(viewLifecycleOwner, ::renderState)
+    }
+
+    fun retrievePayment(pi: String) {
+        viewModel.retrievePayment(pi)
+    }
+
+    private fun renderState(state: PaymentDetailsState) = when (state) {
+        CreatePaymentState.CreatePaymentInitial -> {}
+        CreatePaymentState.CreatePaymentLoading -> renderLoading()
+        is CreatePaymentState.CreatePaymentSuccess -> {}
+        is CreatePaymentState.CreatePaymentError -> renderError(state.exception)
+
+        is PaymentDetailsState.RetrievePaymentState.RetrievePaymentError -> renderError(state.exception)
+        PaymentDetailsState.RetrievePaymentState.RetrievePaymentLoading -> {}
+        PaymentDetailsState.RetrievePaymentState.RetrievePaymentSuccess -> {}
+
+        is PaymentDetailsState.CollectPaymentState.CollectPaymentError -> renderError(state.exception)
+        PaymentDetailsState.CollectPaymentState.CollectPaymentLoading -> {}
+        PaymentDetailsState.CollectPaymentState.CollectPaymentSuccess -> {}
+
+        is PaymentDetailsState.ConfirmPaymentState.ConfirmPaymentError -> renderError(state.exception)
+        PaymentDetailsState.ConfirmPaymentState.ConfirmPaymentLoading -> {}
+        PaymentDetailsState.ConfirmPaymentState.ConfirmPaymentSuccess -> renderConfirmSuccess()
+    }
+
+    private fun renderLoading() = binding?.run {
+        collectPaymentButton.isEnabled = false
+        collectPaymentLoader.visibility = View.VISIBLE
+    }
+
+    private fun renderError(exception: Exception) = binding?.run {
+        collectPaymentButton.isEnabled = true
+        collectPaymentLoader.visibility = View.GONE
+
+        view?.let {
+            Snackbar.make(it, "Error ${exception.message}, restart App", Snackbar.LENGTH_LONG).show()
+        }
+    }
+
+    private fun renderConfirmSuccess() = binding?.run {
+        collectPaymentButton.isEnabled = true
+        collectPaymentLoader.visibility = View.GONE
+
+        view?.let {
+            Snackbar.make(it, "Payment Success", 5000).show()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 }

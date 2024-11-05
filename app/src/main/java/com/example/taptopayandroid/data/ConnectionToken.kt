@@ -1,4 +1,4 @@
-package com.example.taptopayandroid
+package com.example.taptopayandroid.data
 /**
  * A one-field data class used to handle the connection token response from our backend
  */

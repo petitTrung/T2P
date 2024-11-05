@@ -105,9 +105,9 @@ class ConnectReaderFragment : Fragment(R.layout.fragment_connect_reader) {
         locationLoading.visibility = View.GONE
     }
 
-    private fun requestLocationPermission(permissions: Array<String>) {
+    private fun requestLocationPermission(permissions: List<String>) {
         renderLocationLoading()
-        requestPermissionLauncher.launch(permissions)
+        requestPermissionLauncher.launch(permissions.toTypedArray())
     }
 
     private fun requestLocationPermissionDone() {
@@ -135,9 +135,9 @@ class ConnectReaderFragment : Fragment(R.layout.fragment_connect_reader) {
         bluetoothLoading.visibility = View.GONE
     }
 
-    private fun requestBluetoothPermission(permissions: Array<String>) {
+    private fun requestBluetoothPermission(permissions: List<String>) {
         renderBluetoothLoading()
-        requestPermissionLauncher.launch(permissions)
+        requestPermissionLauncher.launch(permissions.toTypedArray())
     }
 
     private fun requestBluetoothPermissionDone() {
@@ -306,6 +306,7 @@ class ConnectReaderFragment : Fragment(R.layout.fragment_connect_reader) {
 
         activity?.let {
             (activity as NavigationListener).onNavigateToPaymentDetails()
+//            (activity as NavigationListener).retrievePaymentIntent(activity?.intent)
         }
     }
 

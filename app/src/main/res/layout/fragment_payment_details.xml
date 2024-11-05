@@ -1,76 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.PaymentDetails">
+    tools:context=".fragments.PaymentDetails"
+    tools:ignore="HardcodedText">
 
-    <TextView
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Collect payment"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dip"
+        android:text="Collect Payment"
         android:textColor="#414552"
-        android:textSize="30dp"
+        android:textSize="30dip"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.193"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/price_input_label"
+        android:id="@+id/priceInputLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dip"
         android:text="Price: "
-        android:textSize="17dp"
         android:textColor="#414552"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.102"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.137" />
+        android:textSize="17dp"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/title" />
 
     <EditText
-        android:id="@+id/price_input"
-        android:layout_width="177dp"
-        android:layout_height="50dp"
+        android:id="@+id/priceInput"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:padding="10dip"
+        android:background="@drawable/edit_text_border"
         android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.162"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.192"
-        android:background="@drawable/edit_text_border"/>
+        android:minHeight="50dip"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/priceInputLabel" />
 
     <Button
-        android:id="@+id/collect_payment_button"
-        android:layout_width="wrap_content"
+        android:id="@+id/collectPaymentButton"
+        android:layout_width="0dip"
         android:layout_height="50dp"
-        android:text="Collect payment"
+        android:layout_marginTop="20dip"
         android:backgroundTint="#635bff"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.18"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.306" />
+        android:text="Collect payment"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/priceInput" />
 
-    <Button
-        android:id="@+id/cancel_button"
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/collectPaymentLoader"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:backgroundTint="#df1b41"
-        android:text="Cancel"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.764"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.305" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:backgroundTint="#635bff"
+        android:indeterminate="true"
+        android:text="Collect payment"
+        android:visibility="gone"
+        app:indicatorSize="32dip"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/collectPaymentButton"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

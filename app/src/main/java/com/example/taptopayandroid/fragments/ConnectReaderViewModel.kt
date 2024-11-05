@@ -36,14 +36,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-
 sealed interface ConnectReaderState {
     data object InitialState : ConnectReaderState
 
     sealed interface RequestPermission : ConnectReaderState {
-        data class RequestLocation(val permissions: Array<String>) : RequestPermission
+        data class RequestLocation(val permissions: List<String>) : RequestPermission
         data object RequestLocationDone : RequestPermission
-        data class RequestBluetooth(val permissions: Array<String>) : RequestPermission
+        data class RequestBluetooth(val permissions: List<String>) : RequestPermission
         data object RequestBluetoothDone : RequestPermission
         data class RequestNFC(val shouldRequest: Boolean) : RequestPermission
     }
@@ -90,7 +89,7 @@ class ConnectReaderViewModel : ViewModel() {
 
         val unGrantedPermissions = buildList {
             if (!context.isGranted(locationPermission)) add(locationPermission)
-        }.toTypedArray()
+        }
 
         delay(200)
         if (unGrantedPermissions.isNotEmpty()) {
@@ -106,7 +105,7 @@ class ConnectReaderViewModel : ViewModel() {
                 if (!context.isGranted(Manifest.permission.BLUETOOTH_SCAN)) add(Manifest.permission.BLUETOOTH_SCAN)
                 if (!context.isGranted(Manifest.permission.BLUETOOTH_CONNECT)) add(Manifest.permission.BLUETOOTH_CONNECT)
             }
-        }.toTypedArray()
+        }
 
         delay(200)
         if (unGrantedPermissions.isNotEmpty()) {
@@ -173,6 +172,8 @@ class ConnectReaderViewModel : ViewModel() {
         ],
     )
     fun discoverReaders(context: Context) = launch {
+        Timber.i("discoveryTask $discoveryTask")
+        Timber.i("connectedReader ${Terminal.getInstance().connectedReader}")
         if (discoveryTask == null && Terminal.getInstance().connectedReader == null) {
             _state.postValue(DiscoverReader.Loading)
             delay(200)
@@ -205,27 +206,34 @@ class ConnectReaderViewModel : ViewModel() {
                         }
                     }
                 )
+        } else if (Terminal.getInstance().connectedReader != null) {
+            _state.postValue(DiscoverReader.Success(Terminal.getInstance().connectedReader!!))
         }
     }
 
     fun connectToReader(reader: Reader, locationId: String) = launch {
         _state.postValue(ConnectToReader.Loading)
         delay(500)
-        val config = ConnectionConfiguration.LocalMobileConnectionConfiguration(locationId)
 
-        Terminal.getInstance().connectLocalMobileReader(
-            reader,
-            config,
-            object : ReaderCallback {
-                override fun onFailure(e: TerminalException) {
-                    _state.postValue(ConnectToReader.Error(e))
-                }
+        if (Terminal.getInstance().connectedReader != null) {
+            _state.postValue(ConnectToReader.Success(reader))
+        } else {
+            val config = ConnectionConfiguration.LocalMobileConnectionConfiguration(locationId)
 
-                override fun onSuccess(reader: Reader) {
-                    _state.postValue(ConnectToReader.Success(reader))
-                }
-            },
-        )
+            Terminal.getInstance().connectLocalMobileReader(
+                reader,
+                config,
+                object : ReaderCallback {
+                    override fun onFailure(e: TerminalException) {
+                        _state.postValue(ConnectToReader.Error(e))
+                    }
+
+                    override fun onSuccess(reader: Reader) {
+                        _state.postValue(ConnectToReader.Success(reader))
+                    }
+                },
+            )
+        }
     }
 
     fun stopDiscovery(onSuccess: () -> Unit = { }) {
