@@ -7,19 +7,6 @@
     tools:context=".fragments.ConnectReaderFragment"
     tools:ignore="HardcodedText,SpUsage">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dip"
-        android:text="Tap to Pay Terminal"
-        android:textColor="#414552"
-        android:textSize="30dip"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startGuideline"
         android:layout_width="wrap_content"
@@ -34,12 +21,36 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.75" />
 
+    <ImageView
+        android:id="@+id/logoAlma"
+        android:layout_width="80dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dip"
+        android:adjustViewBounds="true"
+        android:contentDescription="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_logo_alma" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dip"
+        android:text="Tap to Pay Terminal"
+        android:textAppearance="@style/Title.M"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logoAlma" />
+
     <TextView
         android:id="@+id/locationText"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dip"
         android:text="Request Location"
+        android:textAppearance="@style/Body.M"
         android:textColor="@color/step_text"
         android:textSize="@dimen/step_text_size"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
@@ -83,6 +94,7 @@
         android:text="Request Bluetooth"
         android:textColor="@color/step_text"
         android:textSize="@dimen/step_text_size"
+        android:textAppearance="@style/Body.M"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toBottomOf="@id/locationText"
@@ -124,6 +136,7 @@
         android:text="Request NFC"
         android:textColor="@color/step_text"
         android:textSize="@dimen/step_text_size"
+        android:textAppearance="@style/Body.M"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toBottomOf="@id/bluetoothText"
@@ -165,6 +178,7 @@
         android:text="Request Terminal Token"
         android:textColor="@color/step_text"
         android:textSize="@dimen/step_text_size"
+        android:textAppearance="@style/Body.M"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toBottomOf="@id/nfcText"
@@ -206,6 +220,7 @@
         android:text="Initialize Terminal SDK"
         android:textColor="@color/step_text"
         android:textSize="@dimen/step_text_size"
+        android:textAppearance="@style/Body.M"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toBottomOf="@id/requestTokenText"
@@ -247,6 +262,7 @@
         android:text="Initialize Local Reader"
         android:textColor="@color/step_text"
         android:textSize="@dimen/step_text_size"
+        android:textAppearance="@style/Body.M"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toBottomOf="@id/initializeTerminalText"
@@ -288,6 +304,7 @@
         android:text="Connect to Local Reader"
         android:textColor="@color/step_text"
         android:textSize="@dimen/step_text_size"
+        android:textAppearance="@style/Body.M"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toBottomOf="@id/initializeReaderText"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.PaymentDetails"
+    tools:context=".fragments.PaymentDetailsFragment"
     tools:ignore="HardcodedText">
 
     <androidx.constraintlayout.widget.Guideline
@@ -19,7 +19,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.75" />
+        app:layout_constraintGuide_percent="0.85" />
+
+    <ImageView
+        android:id="@+id/logoAlma"
+        android:layout_width="80dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dip"
+        android:adjustViewBounds="true"
+        android:contentDescription="@null"
+        android:textAppearance="@style/Title.M"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_logo_alma" />
 
     <TextView
         android:id="@+id/title"
@@ -27,20 +40,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dip"
         android:text="Collect Payment"
-        android:textColor="#414552"
-        android:textSize="30dip"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/startGuideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textAppearance="@style/Title.M"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logoAlma" />
 
     <TextView
         android:id="@+id/priceInputLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dip"
-        android:text="Price: "
-        android:textColor="#414552"
-        android:textSize="17dp"
+        android:layout_marginTop="50dip"
+        android:text="Price (in euros)"
+        android:textAppearance="@style/Body.M"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toBottomOf="@id/title" />
 
@@ -49,20 +60,23 @@
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:padding="10dip"
-        android:background="@drawable/edit_text_border"
+        android:background="@drawable/background_stroke_gray_light"
         android:inputType="number"
-        android:minHeight="50dip"
+        android:minHeight="54dip"
+        android:padding="12dip"
+        android:textAppearance="@style/Body.M"
+        android:textColor="@color/black_off"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toBottomOf="@id/priceInputLabel" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/collectPaymentButton"
+        style="@style/Button.Primary"
         android:layout_width="0dip"
         android:layout_height="50dp"
-        android:layout_marginTop="20dip"
-        android:backgroundTint="#635bff"
+        android:layout_marginTop="30dip"
         android:text="Collect payment"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
@@ -73,7 +87,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dip"
-        android:backgroundTint="#635bff"
         android:indeterminate="true"
         android:text="Collect payment"
         android:visibility="gone"

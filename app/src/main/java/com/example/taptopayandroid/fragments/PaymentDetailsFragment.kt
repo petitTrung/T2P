@@ -12,9 +12,9 @@ import com.example.taptopayandroid.databinding.FragmentPaymentDetailsBinding
 import com.example.taptopayandroid.fragments.PaymentDetailsState.CreatePaymentState
 import com.google.android.material.snackbar.Snackbar
 
-class PaymentDetails : Fragment(R.layout.fragment_payment_details) {
+class PaymentDetailsFragment : Fragment(R.layout.fragment_payment_details) {
     companion object {
-        const val TAG = "com.example.taptopayandroid.fragments.PaymentDetails"
+        const val TAG = "com.example.taptopayandroid.fragments.PaymentDetailsFragment"
     }
 
     private var binding: FragmentPaymentDetailsBinding? = null
@@ -78,7 +78,14 @@ class PaymentDetails : Fragment(R.layout.fragment_payment_details) {
         collectPaymentLoader.visibility = View.GONE
 
         view?.let {
-            Snackbar.make(it, "Error ${exception.message}, restart App", Snackbar.LENGTH_LONG).show()
+            val snackbar = Snackbar.make(it, "Error ${exception.message}", Snackbar.LENGTH_LONG).apply {
+                setAction("Try again", object : View.OnClickListener {
+                    override fun onClick(v: View?) {
+                        viewModel.createPayment(priceInput.text.toString())
+                    }
+                })
+            }
+            snackbar.show()
         }
     }
 

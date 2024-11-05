@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#635bff</color>
-    <color name="purple_700">#635bff</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="orange">#FA5022</color>
+    <color name="orange_soft">#FFEADB</color>
+    <color name="orange_light">#FFF3EA</color>
+    <color name="blue">#60D2DF</color>
+    <color name="blue_soft">#E7F8FA</color>
+    <color name="yellow">#FFCF00</color>
+    <color name="yellow_soft">#FFF5CC</color>
+    <color name="green">#4BB543</color>
+    <color name="green_soft">#E2F3E1</color>
+    <color name="red">#FF0000</color>
+    <color name="red_error">#CF2020</color>
+    <color name="red_soft">#FFECEC</color>
+    <color name="white">#FFFFFF</color>
+    <color name="white_off">#F9F9F9</color>
+    <color name="gray_light">#D4D4D4</color>
+    <color name="gray_light_2">#F0F0F0</color>
+    <color name="gray_dark">#8C8C8C</color>
+    <color name="black_off">#1A1A1A</color>
+    <color name="background">#FEFEFE</color>
 
-    <color name="step_text">@android:color/darker_gray</color>
+    <color name="black">#FF000000</color>
+
+    <color name="step_text">@color/gray_dark</color>
 </resources>

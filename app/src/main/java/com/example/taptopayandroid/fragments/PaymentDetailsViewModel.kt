@@ -55,7 +55,7 @@ class PaymentDetailsViewModel : ViewModel() {
         _state.postValue(CreatePaymentState.CreatePaymentLoading)
         withContext(Dispatchers.IO) {
             try {
-                val pi = ApiClient.createPayment(amount.toLong())
+                val pi = ApiClient.createPayment(amount.toLong() * 100)
                 _state.postValue(CreatePaymentState.CreatePaymentSuccess(pi))
                 retrievePayment(pi)
             } catch (e: Exception) {

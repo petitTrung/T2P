@@ -7,7 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.taptopayandroid.fragments.ConnectReaderFragment
-import com.example.taptopayandroid.fragments.PaymentDetails
+import com.example.taptopayandroid.fragments.PaymentDetailsFragment
 import timber.log.Timber
 
 var SKIP_TIPPING: Boolean = true
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
 
     override fun retrievePaymentIntent(pi: String) {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.container)
-        if (currentFragment is PaymentDetails) {
+        if (currentFragment is PaymentDetailsFragment) {
             currentFragment.retrievePayment(pi)
         } else {
             currentPi = pi
@@ -85,6 +85,6 @@ class MainActivity : AppCompatActivity(), NavigationListener {
 
     override fun onNavigateToPaymentDetails() {
         // Navigate to the fragment that will show the payment details
-        navigateTo(PaymentDetails.TAG, PaymentDetails(), true)
+        navigateTo(PaymentDetailsFragment.TAG, PaymentDetailsFragment(), true)
     }
 }
